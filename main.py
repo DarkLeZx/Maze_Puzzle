@@ -23,18 +23,30 @@ class MazeApp:
         self.generate_new_maze()
 
     def create_widgets(self):
-        self.control_frame = tk.Frame(self.root)
-        self.control_frame.pack()
+        self.control_frame = tk.Frame(self.root, bg="skyblue")
+        self.control_frame.pack(pady=10)
 
         self.level_var = tk.IntVar(value=self.current_level)
         for i, (width, height) in enumerate(self.levels):
             tk.Radiobutton(self.control_frame, text=f"Level {i+1} ({width}x{height})",
-                           variable=self.level_var, value=i, command=self.change_level).pack(anchor="w")
+                           variable=self.level_var, value=i, command=self.change_level,
+                           bg="skyblue", padx=10).pack(anchor="w")
 
-        tk.Button(self.control_frame, text="Reset Maze", command=self.reset_maze).pack(anchor="w")
-        tk.Button(self.control_frame, text="Solve Maze", command=self.solve_maze).pack(anchor="w")
-        self.time_label = tk.Label(self.control_frame, text="Time: 0.00 seconds")
-        self.time_label.pack(anchor="w")
+        tk.Button(self.control_frame, text="Reset Maze", command=self.reset_maze,
+                  bg="lightgreen").pack(side="left", padx=10)
+        tk.Button(self.control_frame, text="Solve Maze", command=self.solve_maze,
+                  bg="orange").pack(side="left", padx=10)
+        self.time_label = tk.Label(self.control_frame, text="Time: 0.00 seconds", bg="skyblue")
+        self.time_label.pack(side="left", padx=10)
+
+        # Label untuk keterangan warna
+        legend_frame = tk.LabelFrame(self.root, text="Color Legend", bg="skyblue")
+        legend_frame.pack(pady=10)
+        tk.Label(legend_frame, text="Green: Start", bg="skyblue", fg="green").pack(anchor="w")
+        tk.Label(legend_frame, text="Red: Goal", bg="skyblue", fg="red").pack(anchor="w")
+        tk.Label(legend_frame, text="Yellow: Current", bg="skyblue", fg="yellow").pack(anchor="w")
+        tk.Label(legend_frame, text="Light Green: Open List", bg="skyblue", fg="lightgreen").pack(anchor="w")
+        tk.Label(legend_frame, text="Blue: Path", bg="skyblue", fg="blue").pack(anchor="w")
 
     def change_level(self):
         self.current_level = self.level_var.get()
@@ -72,6 +84,7 @@ class MazeApp:
                 end_time = time.time()
                 elapsed_time = end_time - self.start_time
                 self.time_label.config(text=f"Time: {elapsed_time:.2f} seconds")
+                messagebox.showinfo("Puzzle Completed", "Puzzle has been solved!")
                 return
             self.root.after(100, self.step)
         except StopIteration:
