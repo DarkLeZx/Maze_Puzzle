@@ -14,6 +14,10 @@ class Node:
 def heuristic(node, end):
     return abs(node.position[0] - end.position[0]) + abs(node.position[1] - end.position[1])
 
+def is_valid_position(grid, position):
+    x, y = position
+    return 0 <= x < len(grid) and 0 <= y < len(grid[0]) and grid[x][y] == 0
+
 def astar(grid, start, end):
     open_list = []
     closed_list = set()
@@ -33,17 +37,15 @@ def astar(grid, start, end):
             while current_node:
                 path.append(current_node.position)
                 current_node = current_node.parent
+            path = path[::-1]
             yield grid, path, "path"
-            return path[::-1]
+            return path
 
         neighbors = [(0, 1), (1, 0), (0, -1), (-1, 0)]
         for new_position in neighbors:
             node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
 
-            if (0 <= node_position[0] < len(grid) and 
-                0 <= node_position[1] < len(grid[0]) and
-                grid[node_position[0]][node_position[1]] == 0):
-
+            if is_valid_position(grid, node_position):
                 new_node = Node(node_position, current_node)
 
                 if new_node.position in closed_list:

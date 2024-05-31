@@ -7,7 +7,7 @@ import time
 class MazeApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Maze Solver")
+        self.root.title("Maze Puzzle")
         
         self.levels = [(11, 11), (15, 15), (21, 21), (25, 25)]
         self.current_level = 0
@@ -16,6 +16,7 @@ class MazeApp:
         self.end = None
         self.path = None
         self.start_time = None
+        self.iterations = 0
         self.canvas = tk.Canvas(root, width=500, height=500)
         self.canvas.grid(row=0, column=0, rowspan=3, padx=10, pady=10)
 
@@ -72,6 +73,7 @@ class MazeApp:
         self.time_label.config(text="Time: 0.00 seconds")
         self.text_area_process.delete(1.0, tk.END)
         self.text_area_result.delete(1.0, tk.END)
+        self.iterations = 0  # Reset iterations
 
     def reset_maze(self):
         self.generate_new_maze()
@@ -86,6 +88,7 @@ class MazeApp:
     def step(self):
         try:
             grid, position, status = next(self.a_star_generator)
+            self.iterations += 1  # Increment iterations
             if status == "current":
                 self.draw_maze()
                 self.highlight_position(position, "yellow")
@@ -144,6 +147,7 @@ class MazeApp:
         self.text_area_result.insert(tk.END, "Final path:\n")
         for step in self.path:
             self.text_area_result.insert(tk.END, "{}\n".format(step))
+        self.text_area_result.insert(tk.END, "\nTotal iterations: {}\n".format(self.iterations))
 
 def main():
     root = tk.Tk()
